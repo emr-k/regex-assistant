@@ -1,71 +1,23 @@
-# regex-hover README
+# Regex Hover
 
-This is the README for your extension "regex-hover". After writing up a brief description, we recommend including the following sections.
+Regex Hover is a lightweight, zero-latency VS Code extension that translates regular expressions into plain English directly inside your editor. Just rest your mouse over any regex literal, and see a clear breakdown instantly.
+
+## Why I Built This
+
+Reading complex regular expressions usually means copying the string, opening a browser tab, pasting it into a tester, and context-switching back. That breaks your flow. 
+
+This extension uses a local Abstract Syntax Tree (AST) parser to break down expressions locally in milliseconds—completely offline, with no external API calls or latency.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+- **Instant Hover Tooltips:** Hover over any JavaScript or TypeScript regex literal to view its structure.
+- **Deep Translation:** Explains anchors (`^`, `$`), character classes, repetition ranges, quantifiers, groups, and lookaheads.
+- **Blazing Fast:** Powered by local AST parsing with built-in caching for seamless $O(1)$ performance.
+- **Privacy First:** 100% offline. Your code never leaves your editor.
 
-For example if there is an image subfolder under your extension project workspace:
+## Supported Expressions
 
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
-
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
-
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+Handles standard JS/TS regular expression literals:
+```javascript
+const email = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+const password = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
