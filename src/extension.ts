@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import * as ts from 'typescript';
+import { RegexSidebarProvider } from './sidebarProvider';
 const regexpTree = require('regexp-tree');
 
 // Cache to satisfy the <50ms latency constraint
@@ -7,6 +8,7 @@ const explanationCache = new Map<string, vscode.MarkdownString>();
 const MAX_CACHE_SIZE = 200;
 
 export function activate(context: vscode.ExtensionContext) {
+    // 1. Register the Hover Provider
     const hoverProvider = vscode.languages.registerHoverProvider(
         ['javascript', 'typescript'],
         {
@@ -54,7 +56,14 @@ export function activate(context: vscode.ExtensionContext) {
         }
     );
 
-    context.subscriptions.push(hoverProvider);
+    // 2. Register the Sidebar Webview Provider
+    const sidebarProvider = new RegexSidebarProvider(context.extensionUri);
+    const viewRegistration = vscode.window.registerWebviewViewProvider(
+        RegexSidebarProvider.viewType,
+        sidebarProvider
+    );
+
+    context.subscriptions.push(hoverProvider, viewRegistration);
 }
 
 function getRegexLiteralAtPosition(sourceFile: ts.SourceFile, offset: number): { pattern: string; flags: string } | null {
@@ -114,7 +123,6 @@ function explainNode(node: any): string {
                 }
                 return `\`${expr.value}\``;
             }).join(', ');
-            // Explicit spacing added around the bold tags to fix Markdown rendering
             return `* Matches **${node.negative ? 'none' : 'any'}** of the following: ${chars}.`;
             
         case 'Repetition':
