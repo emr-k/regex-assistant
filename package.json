@@ -1,11 +1,11 @@
 {
-  "name": "regex-helper",
-  "displayName": "Regex Helper",
+  "name": "regex-assistant",
+  "displayName": "Regex Assistant",
   "description": "An all-in-one assistant for understanding and working with regular expressions directly in VS Code.",
   "publisher": "emrekayakucuk",
   "repository": {
     "type": "git",
-    "url": "https://github.com/emr-k/regex-hover"
+    "url": "https://github.com/emr-k/regex-assistant"
   },
   "version": "1.0.0",
   "engines": {

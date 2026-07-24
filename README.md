@@ -1,6 +1,6 @@
-# Regex Helper
+# Regex Assistant
 
-Regex Hover is a lightweight, zero-latency VS Code extension that translates regular expressions into plain English directly inside your editor. Just rest your mouse over any regex literal, and see a clear breakdown instantly.
+Regex Assistant is a lightweight, zero-latency VS Code extension that translates regular expressions into plain English directly inside your editor. Just rest your mouse over any regex literal, and see a clear breakdown instantly.
 
 ## Why I Built This
 
