@@ -1,7 +1,7 @@
 {
-  "name": "regex-hover",
-  "displayName": "Regex Hover",
-  "description": "View plain-English explanations of regular expressions on hover.",
+  "name": "regex-helper",
+  "displayName": "Regex Helper",
+  "description": "An all-in-one assistant for understanding and working with regular expressions directly in VS Code.",
   "publisher": "emrekayakucuk",
   "repository": {
     "type": "git",
