@@ -2,9 +2,14 @@
   "name": "regex-hover",
   "displayName": "Regex Hover",
   "description": "View plain-English explanations of regular expressions on hover.",
-  "version": "0.0.1",
+  "publisher": "emrekayakucuk",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/emr-k/regex-hover"
+  },
+  "version": "1.0.0",
   "engines": {
-    "vscode": "^1.124.0"
+    "vscode": "^1.125.0"
   },
   "categories": [
     "Other"
