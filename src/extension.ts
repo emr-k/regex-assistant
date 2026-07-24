@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import * as ts from 'typescript';
 import { RegexSidebarProvider } from './sidebarProvider';
+import { buildJavaScriptRegexLiteral, formatRegexForLanguage, getLanguageDisplayName, getRegexMatchAtPosition, normalizeLanguageId } from './regexLanguage';
 const regexpTree = require('regexp-tree');
 
 // Cache to satisfy the <50ms latency constraint
@@ -10,17 +10,15 @@ const MAX_CACHE_SIZE = 200;
 export function activate(context: vscode.ExtensionContext) {
     // 1. Register the Hover Provider
     const hoverProvider = vscode.languages.registerHoverProvider(
-        ['javascript', 'typescript'],
+        ['javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'python', 'go'],
         {
             provideHover(document, position, token) {
-                const offset = document.offsetAt(position);
-                const text = document.getText();
-                const sourceFile = ts.createSourceFile(document.fileName, text, ts.ScriptTarget.Latest, true);
-                
-                const regexLiteral = getRegexLiteralAtPosition(sourceFile, offset);
+                const regexLiteral = getRegexMatchAtPosition(document, position);
                 if (!regexLiteral) { return null; }
 
-                const cacheKey = `/${regexLiteral.pattern}/${regexLiteral.flags}`;
+                const sourceLanguage = normalizeLanguageId(document.languageId) ?? 'javascript';
+                const parsedExpression = buildJavaScriptRegexLiteral(regexLiteral.pattern, regexLiteral.flags);
+                const cacheKey = `${sourceLanguage}:${regexLiteral.sourceKind}:${parsedExpression}`;
 
                 // Return from cache if it exists (O(1) lookup)
                 if (explanationCache.has(cacheKey)) {
@@ -28,16 +26,28 @@ export function activate(context: vscode.ExtensionContext) {
                 }
 
                 try {
-                    const ast = regexpTree.parse(cacheKey);
+                    const ast = regexpTree.parse(parsedExpression);
                     const explanation = explainNode(ast.body);
                     
                     const markdown = new vscode.MarkdownString();
                     markdown.appendMarkdown(`### Regex Explanation\n\n`);
+                    markdown.appendMarkdown(`**Detected syntax:** ${getLanguageDisplayName(document.languageId)} (${regexLiteral.sourceKind.replace(/-/g, ' ')})\n\n`);
                     markdown.appendMarkdown(explanation);
 
-                    // Add flag explanations if they exist
-                    if (regexLiteral.flags) {
-                        markdown.appendMarkdown(`\n\n---\n**Flags active:** \`${regexLiteral.flags}\``);
+                    const pythonExport = formatRegexForLanguage(regexLiteral.pattern, regexLiteral.flags, 'python');
+                    const goExport = formatRegexForLanguage(regexLiteral.pattern, regexLiteral.flags, 'go');
+
+                    markdown.appendMarkdown(`\n\n---\n### Language Export\n`);
+                    markdown.appendMarkdown(`\n**Python**\n\n`);
+                    markdown.appendCodeblock(pythonExport.code, 'python');
+                    if (pythonExport.hint) {
+                        markdown.appendMarkdown(`\n_${pythonExport.hint}_`);
+                    }
+
+                    markdown.appendMarkdown(`\n\n**Go**\n\n`);
+                    markdown.appendCodeblock(goExport.code, 'go');
+                    if (goExport.hint) {
+                        markdown.appendMarkdown(`\n_${goExport.hint}_`);
                     }
                     
                     // Manage Cache Size
@@ -64,23 +74,6 @@ export function activate(context: vscode.ExtensionContext) {
     );
 
     context.subscriptions.push(hoverProvider, viewRegistration);
-}
-
-function getRegexLiteralAtPosition(sourceFile: ts.SourceFile, offset: number): { pattern: string; flags: string } | null {
-    let result: { pattern: string; flags: string } | null = null;
-    function visit(node: ts.Node) {
-        if (result) { return; } 
-        if (offset >= node.getStart() && offset <= node.getEnd()) {
-            if (ts.isRegularExpressionLiteral(node)) {
-                const match = node.text.match(/^\/(.*)\/([a-z]*)$/);
-                if (match) { result = { pattern: match[1], flags: match[2] }; }
-            } else {
-                ts.forEachChild(node, visit);
-            }
-        }
-    }
-    visit(sourceFile);
-    return result;
 }
 
 function explainNode(node: any): string {

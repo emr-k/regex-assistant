@@ -3,11 +3,12 @@
   "displayName": "Regex Assistant",
   "description": "An all-in-one assistant for understanding and working with regular expressions directly in VS Code.",
   "publisher": "emrekayakucuk",
+  "icon": "resources/icon.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/emr-k/regex-assistant"
   },
-  "version": "1.0.1",
+  "version": "1.0.2",
   "engines": {
     "vscode": "^1.125.0"
   },
@@ -16,7 +17,11 @@
   ],
   "activationEvents": [
     "onLanguage:javascript",
-    "onLanguage:typescript"
+    "onLanguage:javascriptreact",
+    "onLanguage:typescript",
+    "onLanguage:typescriptreact",
+    "onLanguage:python",
+    "onLanguage:go"
   ],
   "main": "./dist/extension.js",
   "contributes": {
@@ -25,7 +30,7 @@
       {
         "id": "regex-helper-sidebar",
         "title": "Regex Helper",
-        "icon": "resources/icon.svg"
+        "icon": "resources/bar_icon.svg"
       }
     ]
   },
@@ -34,7 +39,8 @@
       {
         "id": "regexHelperView",
         "name": "Workbench & Snippets",
-        "type": "webview"
+        "type": "webview",
+        "icon": "resources/bar_icon.svg"
       }
     ]
   }
